@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -47,8 +48,16 @@ public class TodoController {
     }
 
     @GetMapping("/modify")
-    public String modify() {
-        return "modify";
+    public TodoEntity modify(@RequestParam Long id) {
+        // TodoEntity todo = new TodoEntity();
+        // new를 하면 빈 껍데기가 만들어짐 ===> save 하면 기존의 데이터가 사라지게됨
+        // ===> 조회를 해준 다음에 필요한 부분만 save
+        Optional<TodoEntity> opt = todoRepository.findById(id);
+        TodoEntity todo = opt.get();
+        Boolean checked = todo.getChecked();
+        todo.setChecked(!checked);
+        TodoEntity result = todoRepository.save(todo);
+        return result;
     }
 
     // @GetMapping("/remove")
